@@ -5,6 +5,7 @@ Given a solution for a nonogram puzzle:
 """
 import numpy as np
 import random
+from __future__ import print_function
 random.seed(50)
 
 
@@ -327,7 +328,7 @@ def generate_solutions(
             n_changed += sum(possibilities_filled)
             n_changed += sum(possibilities_empty)
 
-        print "n_changed = %s" % n_changed
+        print("n_changed = %s" % n_changed)
 
         # cols
         for col_index, col_constraints in zip(range(n_cols), cols_constraints):
@@ -362,8 +363,8 @@ def generate_solutions(
             n_changed += sum(possibilities_filled)
             n_changed += sum(possibilities_empty)
 
-        print "n_changed = %s" % n_changed
-        print "finished iter %s" % iters
+        print("n_changed = %s" % n_changed)
+        print("finished iter %s" % iters)
 
         iters += 1
     return puzzle
@@ -395,8 +396,8 @@ class NonogramSolver(object):
     def _pick_help_square(self, position=None):
         # randomly pick an element in the filled list
         # add that filled in thing to the puzzle solution
-        print "%s squares available" % (
-            len(self.filled_positions_hint_eligible))
+        print("%s squares available" % (
+            len(self.filled_positions_hint_eligible)))
         if len(self.filled_positions_hint_eligible) == 0:
             raise ValueError("No more positions available")
 
