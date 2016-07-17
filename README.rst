@@ -1,5 +1,6 @@
 Nonogram Solver
 ===============
+https://travis-ci.org/mprat/nonogram-solver.svg?branch=master
 
 This project provides a general nonogram solver. It can determine if a puzzle is not solveable by a human, and if it is solveable, can provide the solution.
 
