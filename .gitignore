@@ -5,8 +5,13 @@
 # Python files
 *.pyc
 *.pyo
+*.egg-info
 
 # Test files
 .cache/*
 */.cache/*
 .coverage
+
+# build files
+build/*
+dist/*
