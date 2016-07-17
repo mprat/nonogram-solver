@@ -165,7 +165,7 @@ def generate_constraints_line(constraints, prior, size):
     end_blocks = []
     end_would_be_zero_index = []
     reverse_index_range = range(len(prior))
-    reverse_index_range.reverse()
+    reverse_index_range = reversed(reverse_index_range)
     block = 0
     for index, item in zip(reverse_index_range, prior[::-1]):
         if item != -1 and item == 1:
