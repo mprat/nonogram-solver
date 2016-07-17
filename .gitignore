@@ -5,3 +5,8 @@
 # Python files
 *.pyc
 *.pyo
+
+# Test files
+.cache/*
+*/.cache/*
+.coverage
