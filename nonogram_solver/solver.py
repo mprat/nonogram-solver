@@ -7,10 +7,9 @@ import numpy as np
 import random
 random.seed(50)
 
-debug = True
 
-
-def solve(nonogram, add_puzzle_constraints=False):
+def solve(
+        nonogram, starter=None, add_puzzle_constraints=False):
     """
     Given a nonogram, determine whether it is solveable or not.
     If it is not solveable and add_puzzle_constraints is True,
@@ -20,13 +19,30 @@ def solve(nonogram, add_puzzle_constraints=False):
     Args:
         nonogram (nonogram_solver.nonogram.Nonogram): a nonogram
             represented in the nonogram_solver Nonogram type
+        starter (int, optional): number of "starter" squares to seed
+            the puzzle with before trying to solve it
         add_puzzle_constraints (bool, optional): if True and the puzzle
             is not solveable, add given squares to the nonogram to
             make it solveable.
     """
-    solver = NonogramSolver()
-    solver.generate_solutions(nonogram)
-    return False
+
+    nonogram_solver = NonogramSolver(nonogram)
+
+    if starter is not None:
+        for i in xrange(starter):
+            nonogram_solver._pick_help_square()
+
+    nonogram_solver._generate_solutions()
+
+    if add_puzzle_constraints:
+        while not nonogram_solver._puzzle_is_solved():
+            # pick a random filled in square
+            # generate solutions until the puzzle is solved
+            nonogram_solver._pick_help_square()
+
+            nonogram_solver._generate_solutions()
+
+    return nonogram_solver._puzzle_is_solved(), nonogram_solver
 
 
 def possibilities_generator(
@@ -288,7 +304,7 @@ def generate_solutions(
             (possibilities_filled, possibilities_empty) = \
                 generate_constraints_line(
                     row_constraints,
-                    puzzle[row_index, :],
+                    puzzle[row_index, :].copy(),
                     n_cols)
 
             for index in range(len(possibilities_filled)):
@@ -311,9 +327,6 @@ def generate_solutions(
             n_changed += sum(possibilities_filled)
             n_changed += sum(possibilities_empty)
 
-        if debug:
-            for row_index in range(n_rows):
-                print puzzle[row_index, :]
         print "n_changed = %s" % n_changed
 
         # cols
@@ -326,7 +339,7 @@ def generate_solutions(
             (possibilities_filled, possibilities_empty) = \
                 generate_constraints_line(
                     col_constraints,
-                    puzzle[:, col_index],
+                    puzzle[:, col_index].copy(),
                     n_rows)
 
             for index in range(len(possibilities_filled)):
@@ -356,272 +369,42 @@ def generate_solutions(
     return puzzle
 
 
-def generate_row_solutions_recursive(
-        constraints_list, state, prior,
-        possibilities_filled, possibilities_empty,
-        total_filled_in_row, state_len):
-
-    # print state, constraints_list
-
-    # print "---"
-    # print "state = %s" % state
-    # print "possibilities empty %s" % possibilities_empty
-    # print "possibilities filled %s" % possibilities_filled
-    # print "constraints_list %s" % constraints_list
-    # print "---"
-    # possibilities_filled_temp = np.ones(len(prior)).astype(bool)
-    # possibilities_empty_temp = np.ones(len(prior)).astype(bool)
-
-    # import pudb; pudb.set_trace()
-
-    if np.all(np.logical_not(possibilities_empty)) and \
-            np.all(np.logical_not(possibilities_filled)):
-        return (possibilities_filled, possibilities_empty)
-
-    if np.sum(state == 1) == total_filled_in_row or \
-            len(constraints_list) == 0:
-        for index in xrange(state_len):
-            if state[index] == -1:
-                state[index] = 0
-
-        # if contradiction between state and prior,
-        # return None
-        if np.any(state[np.where(prior == 1)[0]] != 1) or \
-                np.any(state[np.where(prior == 0)[0]] != 0) or \
-                np.sum(state == 1) > total_filled_in_row or \
-                (np.all(state >= 0) and np.sum(state == 1) !=
-                    total_filled_in_row) or \
-                np.all(prior == state):
-            # print "---"
-            return (possibilities_filled, possibilities_empty)
-
-        possibilities_filled = np.logical_and(
-            possibilities_filled, state == 1)
-        possibilities_empty = np.logical_and(
-            possibilities_empty, state == 0)
-        return (possibilities_filled, possibilities_empty)
-
-    # for constraint_index, constraint in zip(
-    #         range(len(constraints_list)), constraints_list):
-    constraint = constraints_list[0]
-
-    unknown_pos = np.where(state != -1)[0]
-    min_possible_index = 0
-    if len(unknown_pos) > 0:
-        # min_possible_index = max(unknown_pos + 1)
-        min_possible_index = unknown_pos[-1] + 1
-    # min_pos = sum(
-    #     constraints_list[:constraint_index]) + constraint_index
-    max_pos = state_len - 1 - (
-        sum(constraints_list[1:]) +
-        len(constraints_list[1:]))
-
-    # min_pos += min_possible_index
-    max_pos = min(max_pos + min_possible_index, state_len - 1)
-    max_start_pos = max_pos + 1 - constraint
-
-    for start_pos in xrange(min_possible_index, max_start_pos + 1):
-        # if you are going to write over the state, don't
-        # consider it
-        possible = state.copy()
-
-        possible[start_pos:start_pos + constraint] = 1
-        if start_pos + constraint < state_len:
-            possible[start_pos + constraint] = 0
-
-        for index in xrange(start_pos):
-            if possible[index] == -1:
-                possible[index] = 0
-
-        # if np.any(prior[np.where(possible == 1)[0]] == 0) or \
-        #         np.any(prior[np.where(possible == 0)[0]] == 1) or \
-        #         np.sum(possible == 1) > total_filled_in_row or \
-        #         (np.all(possible >= 0) and np.sum(possible == 1) !=
-        #             total_filled_in_row) or \
-        #         np.all(possible == prior):
-        #     return (possibilities_filled, possibilities_empty)
-
-        subconstraint_list = constraints_list[1:]
-        (possibilities_filled, possibilities_empty) = \
-            generate_row_solutions_recursive(
-            subconstraint_list,
-            possible,
-            prior,
-            possibilities_filled, possibilities_empty,
-            total_filled_in_row,
-            state_len)
-
-    return (possibilities_filled, possibilities_empty)
-
-
-def generate_solutions_recursive(
-        n_rows, n_cols, rows_constraints, cols_constraints, puzzle_state):
-    # iterate through all possible row constraints
-    # and and all the possibilities
-
-    n_changed = 1
-    iters = 0
-    while n_changed > 0:
-        n_changed = 0
-        # iterate through rows
-        for row_index, row_constraints in zip(range(n_rows), rows_constraints):
-            # for a given row, iterate through all possible
-            # combinations
-            # if row_index == 3 and iters == 1:
-            #     import pudb; pudb.set_trace()
-            prior = puzzle_state[row_index, :]
-
-            # possibilities_filled = prior == 1
-            # possibilities_empty = prior == 0
-            possibilities_filled = np.ones(len(prior)).astype(bool)
-            possibilities_empty = np.ones(len(prior)).astype(bool)
-
-            total_filled_in_row = np.sum(row_constraints)
-            # import pudb; pudb.set_trace()
-            (possibilities_filled, possibilities_empty) = \
-                generate_row_solutions_recursive(
-                row_constraints, -1 * np.ones(len(prior)),
-                prior,
-                possibilities_filled, possibilities_empty,
-                total_filled_in_row,
-                n_cols)
-
-            if np.all(possibilities_empty) and np.all(possibilities_filled):
-                continue
-
-            print "row %s, constraints %s" % (row_index, row_constraints)
-            print "FINISHED: filled %s" % possibilities_filled
-            print "FINISHED: empty %s" % possibilities_empty
-
-            for index in range(len(possibilities_filled)):
-                if possibilities_filled[index] and \
-                        puzzle_state[row_index, index] == 1:
-                    possibilities_filled[index] = False
-
-            for index in range(len(possibilities_empty)):
-                if possibilities_empty[index] and \
-                        puzzle_state[row_index, index] == 0:
-                    possibilities_empty[index] = False
-
-            if np.all(possibilities_filled) is False and \
-                    np.all(possibilities_empty) is False:
-                continue
-
-            puzzle_state[row_index, :][possibilities_filled] = 1
-            puzzle_state[row_index, :][possibilities_empty] = 0
-
-            n_changed += sum(possibilities_filled)
-            n_changed += sum(possibilities_empty)
-
-        # iterate through cols
-        for col_index, col_constraints in zip(range(n_cols), cols_constraints):
-            # for a given row, iterate through all possible
-            # combinations
-            prior = puzzle_state[:, col_index]
-
-            # possibilities_filled = prior == 1
-            # possibilities_empty = prior == 0
-            possibilities_filled = np.ones(len(prior)).astype(bool)
-            possibilities_empty = np.ones(len(prior)).astype(bool)
-
-            total_filled_in_col = np.sum(col_constraints)
-            (possibilities_filled, possibilities_empty) = \
-                generate_row_solutions_recursive(
-                col_constraints, -1 * np.ones(len(prior)),
-                prior,
-                possibilities_filled, possibilities_empty,
-                total_filled_in_col,
-                n_rows)
-
-            if np.all(possibilities_empty) and np.all(possibilities_filled):
-                continue
-
-            print "col %s, constraints %s" % (col_index, col_constraints)
-            print "FINISHED: filled %s" % possibilities_filled
-            print "FINISHED: empty %s" % possibilities_empty
-
-            for index in range(len(possibilities_filled)):
-                if possibilities_filled[index] and \
-                        puzzle_state[index, col_index] == 1:
-                    possibilities_filled[index] = False
-
-            for index in range(len(possibilities_empty)):
-                if possibilities_empty[index] and \
-                        puzzle_state[index, col_index] == 0:
-                    possibilities_empty[index] = False
-
-            if np.all(possibilities_filled) is False and \
-                    np.all(possibilities_empty) is False:
-                continue
-
-            puzzle_state[:, col_index][possibilities_filled] = 1
-            puzzle_state[:, col_index][possibilities_empty] = 0
-
-            n_changed += sum(possibilities_filled)
-            n_changed += sum(possibilities_empty)
-
-        print "finished iter %s" % iters
-        print "n_changed = %s" % n_changed
-        print "inner puzzle state: "
-        print puzzle_state
-        iters += 1
-
-    # import pudb; pudb.set_trace()
-    return puzzle_state
-
-    # # iterate through cols
-    # for col_index, col_constraints in zip(range(n_cols), cols_constraints):
-    #     prior = puzzle_state[:, col_index]
-
-    #     possibilities_filled = prior == 1
-    #     possibilities_empty = prior == 0
-    #     for constraint in col_constraints:
-    #         pass
-
-
-class Nonogram(object):
-    def __init__(self, braille_box, ordered=True):
-        self.braille_box = braille_box
-        self.rows_constraints, self.cols_constraints = \
-            self._generate_constraints(ordered=ordered)
-        self.n_rows = len(braille_box)
-        self.n_cols = len(braille_box[0])
-        self.solutions = []
-        self.ordered = ordered
-        self.puzzle_state = -1 * np.ones((self.n_rows, self.n_cols))
-        self.filled_positions_hint_eligible = \
-            self._generate_filled_positions_from_braille_box()
+class NonogramSolver(object):
+    def __init__(self, nonogram):
+        self.nonogram = nonogram
+        self.puzzle_state = -1 * np.ones((nonogram.n_rows, nonogram.n_cols))
+        self.filled_positions_hint_eligible = nonogram.solution_list
         self.prefilled_positions = []
 
     def _generate_solutions(self):
         self.puzzle_state = generate_solutions(
-            self.n_rows, self.n_cols, self.rows_constraints,
-            self.cols_constraints, self.puzzle_state)
-        # self.puzzle_state = generate_solutions_recursive(
-        #     self.n_rows, self.n_cols, self.rows_constraints,
-        #     self.cols_constraints, self.puzzle_state)
-
-        print self.puzzle_state
+            self.nonogram.n_rows, self.nonogram.n_cols,
+            self.nonogram.rows_constraints,
+            self.nonogram.cols_constraints,
+            self.puzzle_state)
 
         # update the positions that can be used for hints appropriately
-        for row_index, row in zip(range(self.n_rows), self.puzzle_state):
-            for col_index, col_elem in zip(range(self.n_cols), row):
+        for row_index, row in zip(range(
+                self.nonogram.n_rows), self.puzzle_state):
+            for col_index, col_elem in zip(range(self.nonogram.n_cols), row):
                 pos = (row_index, col_index)
                 if col_elem == 1 and \
                         pos in self.filled_positions_hint_eligible:
                     self.filled_positions_hint_eligible.remove(pos)
 
-    def _pick_help_square(self):
+    def _pick_help_square(self, position=None):
         # randomly pick an element in the filled list
         # add that filled in thing to the puzzle solution
         print "%s squares available" % (
             len(self.filled_positions_hint_eligible))
         if len(self.filled_positions_hint_eligible) == 0:
             raise ValueError("No more positions available")
-        filled_square = random.choice(self.filled_positions_hint_eligible)
-        if debug:
-            print "choosing (%s, %s) to fill" % (
-                filled_square[0], filled_square[1])
+
+        if position is None:
+            filled_square = random.choice(self.filled_positions_hint_eligible)
+        else:
+            filled_square = position
+
         self.filled_positions_hint_eligible.remove(filled_square)
         self.prefilled_positions.append(filled_square)
 
@@ -631,22 +414,3 @@ class Nonogram(object):
         if np.sum(self.puzzle_state == -1) == 0:
             return True
         return False
-
-
-def generate_puzzle_constraints(nonogram, starter=None):
-    if starter is not None:
-        for i in xrange(starter):
-            nonogram._pick_help_square()
-
-    nonogram._generate_solutions()
-
-    while not nonogram._puzzle_is_solved():
-        # pick a random filled in square
-        # generate solutions until the puzzle is solved
-        # import pudb; pudb.set_trace()
-        nonogram._pick_help_square()
-        # print nonogram.prefilled_positions
-
-        nonogram._generate_solutions()
-
-    return nonogram.prefilled_positions

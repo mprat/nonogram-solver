@@ -11,6 +11,7 @@ class Nonogram(object):
         self.n_cols = None
         self.rows_constraints = None
         self.cols_constraints = None
+        self.solution_state = None
         self.solution_list = None
         self.ordered = ordered
 
@@ -57,6 +58,15 @@ class Nonogram(object):
         self.rows_constraints = rows_constraints
         self.cols_constraints = cols_constraints
         self._init_puzzle()
+        self.solution_state = np.zeros((self.n_rows, self.n_cols))
+        for (row, col) in filled_positions:
+            self.solution_state[row, col] = 1
 
     def init_from_constraints(self, rows_constraints, cols_constraints):
+        pass
+
+    def display_puzzle_svg(self):
+        pass
+
+    def display_solution_svg(self):
         pass
