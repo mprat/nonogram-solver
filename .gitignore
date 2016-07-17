@@ -1,0 +1,7 @@
+# sublime files
+*.sublime-workspace
+*.sublime-project
+
+# Python files
+*.pyc
+*.pyo
