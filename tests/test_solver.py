@@ -11,15 +11,18 @@ def test_nonogram_init():
         '.....']
 
     nonogram = Nonogram()
-    nonogram.init_from_string_box(string_box)
+    nonogram.init_from_solution_string(string_box)
 
     assert len(nonogram.rows_constraints) == 5
     assert len(nonogram.cols_constraints) == 5
     assert nonogram.rows_constraints[0] == [3]
-    assert all(nonogram.rows_constraints[1:] == [])
+    assert nonogram.rows_constraints[1:] == [[], [], [], []]
     assert nonogram.cols_constraints[0] == []
-    assert nonogram.cols_constraints[1:4] == [1]
+    assert nonogram.cols_constraints[1:4] == [[1], [1], [1]]
     assert nonogram.cols_constraints[4] == []
+    assert sorted(nonogram.solution_list) == [
+        (0, 1), (0, 2), (0, 3)]
+    # assert nonogram.solution_list == nonogram.hint_eligible
 
 
 def test_nonogram_solve():
@@ -31,7 +34,7 @@ def test_nonogram_solve():
         'o...o']
 
     nonogram = Nonogram()
-    nonogram.init_from_string_box(string_box)
+    nonogram.init_from_solution_string(string_box)
     puzzle_constraints = \
         solver.generate_puzzle_constraints(nonogram)
 

@@ -10,6 +10,25 @@ random.seed(50)
 debug = True
 
 
+def solve(nonogram, add_puzzle_constraints=False):
+    """
+    Given a nonogram, determine whether it is solveable or not.
+    If it is not solveable and add_puzzle_constraints is True,
+    solve the puzzle while adding puzzle constraints to
+    the given nonogram.
+
+    Args:
+        nonogram (nonogram_solver.nonogram.Nonogram): a nonogram
+            represented in the nonogram_solver Nonogram type
+        add_puzzle_constraints (bool, optional): if True and the puzzle
+            is not solveable, add given squares to the nonogram to
+            make it solveable.
+    """
+    solver = NonogramSolver()
+    solver.generate_solutions(nonogram)
+    return False
+
+
 def possibilities_generator(
         prior, min_pos, max_start_pos, constraint_len, total_filled):
     """
@@ -573,46 +592,6 @@ class Nonogram(object):
         self.filled_positions_hint_eligible = \
             self._generate_filled_positions_from_braille_box()
         self.prefilled_positions = []
-
-    def _generate_filled_positions_from_braille_box(self):
-        # given the braille box, generate the filled positions
-        # in a list
-        filled_positions = []
-        for row_index, row in zip(range(self.n_rows), self.braille_box):
-            for col_index, col_char in zip(range(self.n_cols), row):
-                if col_char == 'o':
-                    filled_positions.append((row_index, col_index))
-        return filled_positions
-
-    def _generate_constraints(self, ordered=True):
-        # write the constraints on the left and top
-        # generate the row and col constraints
-        cols = []
-        rows_constraints = []
-        cols_constraints = []
-        for row in self.braille_box:
-            row_constraints = [
-                len(x) for x in row.split('.') if len(x) > 0]
-            if not ordered:
-                row_constraints = sorted(row_constraints)
-            rows_constraints.append(row_constraints)
-            for col_char, col_index in zip(
-                    row, range(len(self.braille_box[0]))):
-                try:
-                    col = cols[col_index]
-                except IndexError:
-                    col = ''
-                    cols.append([])
-                col += col_char
-                cols[col_index] = col
-        for col in cols:
-            col_constraints = [
-                len(x) for x in col.split('.') if len(x) > 0]
-            if not ordered:
-                col_constraints = sorted(col_constraints)
-            cols_constraints.append(col_constraints)
-
-        return rows_constraints, cols_constraints
 
     def _generate_solutions(self):
         self.puzzle_state = generate_solutions(
