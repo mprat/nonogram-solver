@@ -29,7 +29,7 @@ setup(
     keywords='puzzles nonogram solver puzzle',
 
     packages=find_packages(exclude=['tests', 'docs']),
-    install_requires=['numpy>=1.15'],
+    install_requires=['numpy>=1.10'],
     extras_require={
         'test': ['pytest', 'pytest-cov', 'coverage']
     }
