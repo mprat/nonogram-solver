@@ -3,9 +3,9 @@ Given a solution for a nonogram puzzle:
 1. prove it can be solveable
 2. if it cannot be solveable, add constraints until the solution is unique
 """
+from __future__ import print_function
 import numpy as np
 import random
-from __future__ import print_function
 random.seed(50)
 
 
