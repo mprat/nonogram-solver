@@ -54,7 +54,6 @@ class Nonogram(object):
                     filled_positions.append((row_index, col_index))
 
         self.solution_list = filled_positions
-        # self.hint_eligible = filled_positions
         self.rows_constraints = rows_constraints
         self.cols_constraints = cols_constraints
         self._init_puzzle()
@@ -62,8 +61,14 @@ class Nonogram(object):
         for (row, col) in filled_positions:
             self.solution_state[row, col] = 1
 
-    def init_from_constraints(self, rows_constraints, cols_constraints):
-        pass
+    def init_from_matrix(self, matrix):
+        """
+        Args:
+            matrix (numpy array): array of arrays representing the solution
+        """
+        self.solution_state = matrix
+        self.solution_list = zip(np.where(matrix == 1))
+        # TODO: finish this function
 
     def display_puzzle_svg(self):
         pass
