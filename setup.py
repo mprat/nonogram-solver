@@ -9,7 +9,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='nonogram-solver',
-    version='0.1',
+    version='1.0',
     description='A nonogram puzzle solver.',
     long_description=long_description,
     url='https://github.com/mprat/nonogram-solver',

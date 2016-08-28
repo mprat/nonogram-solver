@@ -7,6 +7,6 @@ This project provides a general nonogram solver. It can determine if a puzzle is
 
 This solver can be used to create nonogram puzzles given a successful final solution. If the given solution is not solvable, the solver will suggest "hint" squares to be filled in when the nonogram is given to a human solver.
 
-.. |ci-status| image:: https://travis-ci.org/nedbat/coveragepy.svg?branch=master
-    :target: https://travis-ci.org/nedbat/coveragepy
+.. |ci-status| image:: https://travis-ci.org/mprat/nonogram-solver.svg?branch=master
+    :target: https://travis-ci.org/mprat/nonogram-solver
     :alt: Build status
