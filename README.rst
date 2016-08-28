@@ -20,4 +20,5 @@ To install, run `pip install nonogram-solver`.
 Project Website
 ---------
 PyPI: `https://pypi.python.org/pypi/nonogram-solver <https://pypi.python.org/pypi/nonogram-solver>`_
+
 Github: `https://github.com/mprat/nonogram-solver <https://github.com/mprat/nonogram-solver>`_
