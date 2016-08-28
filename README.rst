@@ -10,3 +10,14 @@ This solver can be used to create nonogram puzzles given a successful final solu
 .. |ci-status| image:: https://travis-ci.org/mprat/nonogram-solver.svg?branch=master
     :target: https://travis-ci.org/mprat/nonogram-solver
     :alt: Build status
+
+
+Installation
+--------
+To install, run `pip install nonogram-solver`.
+
+
+Project Website
+---------
+PyPI: `https://pypi.python.org/pypi/nonogram-solver <https://pypi.python.org/pypi/nonogram-solver>`_
+Github: `https://github.com/mprat/nonogram-solver <https://github.com/mprat/nonogram-solver>`_
