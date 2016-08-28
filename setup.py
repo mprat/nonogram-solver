@@ -18,7 +18,7 @@ setup(
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Indended Audience :: Other Audience',
+        'Intended Audience :: Other Audience',
         'Topic :: Games/Entertainment :: Puzzle Games',
         'License :: OSI Approved :: MIT License',
 
