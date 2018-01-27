@@ -7,15 +7,22 @@ This project provides a general nonogram solver. It can determine if a puzzle is
 
 This solver can be used to create nonogram puzzles given a successful final solution. If the given solution is not solvable, the solver will suggest "hint" squares to be filled in when the nonogram is given to a human solver.
 
+Input from JSON file possible, as generation of SVGs.
+
 .. |ci-status| image:: https://travis-ci.org/mprat/nonogram-solver.svg?branch=master
     :target: https://travis-ci.org/mprat/nonogram-solver
     :alt: Build status
-
 
 Installation
 --------
 To install, run `pip install nonogram-solver`.
 
+Example
+--------
+
+.. image:: https://github.com/paulwuertz/nonogram-solver/blob/master/tests/test.svg 
+   :height: 400px
+   :width: 300px
 
 Project Website
 ---------

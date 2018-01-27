@@ -12,7 +12,7 @@ def simple_nonogram_from_string_box():
         '..oo.',
         '.o..o',
         'o...o']
-
+    
     nonogram = Nonogram()
     nonogram.init_from_solution_string(string_box)
     return nonogram
@@ -73,3 +73,10 @@ def test_nonogram_solver_manual(simple_nonogram_from_string_box):
          [0, 0, 1, 1, 0],
          [-1, -1, -1, 0, 1],
          [-1, -1, 0, 0, 1]]))
+
+
+def svgGen():
+    nonogram = Nonogram()
+    nonogram.init_from_json("rose_nonogram.json")
+    nonogram.display_puzzle_svg()
+svgGen()
