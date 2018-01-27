@@ -13,11 +13,16 @@ Input from JSON file possible, as generation of SVGs.
     :target: https://travis-ci.org/mprat/nonogram-solver
     :alt: Build status
 
-
 Installation
 --------
 To install, run `pip install nonogram-solver`.
 
+Example
+--------
+
+.. image:: https://github.com/paulwuertz/nonogram-solver/blob/master/tests/test.svg 
+   :height: 400px
+   :width: 300px
 
 Project Website
 ---------
