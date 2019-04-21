@@ -21,6 +21,7 @@ See example.py for sample use of the library.
     python3 example.py --svgout example.svg csv --columncsv example.columns.csv --rowcsv example.rows.csv
 
 SVG Example:
+
 .. image:: example.svg
 
 
