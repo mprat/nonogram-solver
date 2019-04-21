@@ -23,6 +23,8 @@ See example.py for sample use of the library.
 SVG Example:
 
 .. image:: example.svg
+   :height: 420
+   :width: 305
 
 
 Installation
