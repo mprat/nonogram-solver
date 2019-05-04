@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: example.json",
+            "type": "python",
+            "request": "launch",
+            "program": "example.py",
+            "console": "integratedTerminal",
+            "args": [
+                "json",
+                "--json", "example.json"
+             ]
+        },
+        {
+            "name": "Python: example csv with svg",
+            "type": "python",
+            "request": "launch",
+            "program": "example.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--svgout", "example.svg",
+                "csv",
+                "--columncsv", "example.columns.csv",
+                "--rowcsv", "example.rows.csv"
+             ]
+        },
+        {
+            "name": "Python: Current File (Integrated Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Current File (External Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "externalTerminal"
+        }
+    ]
+}
