@@ -249,7 +249,7 @@ def generate_constraints_line(constraints, prior, size):
         for possible_nums in possibilities_generator(
                 prior, min_pos, max_start_pos, contraint, total_filled):
             possible_filled = possible_nums == 1
-            possible_empty = possible_nums != 1
+            possible_empty = possible_nums == 1
             possibilities_filled_temp = np.logical_and(
                 possibilities_filled_temp, possible_filled)
             possibilities_empty_temp = np.logical_and(
