@@ -183,8 +183,8 @@ def generate_constraints_line(constraints, prior, size):
 
     index = len(constraints) - 1
     for block, constraint in zip(
-            end_blocks[::-1],
-            constraints[-1 * len(end_blocks):]):
+            end_blocks[:],constraints[len(constraints)-len(end_blocks):len(constraints)][::-1]
+            ):
         if block == constraint:
             # remove from iteration
             indices_to_remove.append(index)
@@ -219,10 +219,23 @@ def generate_constraints_line(constraints, prior, size):
 
         possibilities_filled_temp = np.ones(size).astype(bool)
         possibilities_empty_temp = np.ones(size).astype(bool)
-        min_pos = sum(constraints[:constraint_index]) + constraint_index
+
+        prefixEmpty = 0;
+        suffixEmpty = 0;
+        for i in range(len(prior)):
+            if prior[i] != 0:
+                prefixEmpty = i
+                break
+
+        for i in range(len(prior)):
+            if prior[len(prior)-1-i] != 0:
+                suffixEmpty = i
+                break
+
+        min_pos = sum(constraints[:constraint_index]) + constraint_index + prefixEmpty
         max_pos = size - 1 - (
             sum(constraints[constraint_index + 1:]) +
-            len(constraints[constraint_index + 1:]))
+            len(constraints[constraint_index + 1:]) + suffixEmpty)
 
         # if we already have everything in that window
         # just continue
@@ -246,22 +259,16 @@ def generate_constraints_line(constraints, prior, size):
         # the smart logic about the constraints is generated
         # in the possibilities_generator
         i = 0
-        for possible_nums in possibilities_generator(
-                prior, min_pos, max_start_pos, contraint, total_filled):
+        for possible_nums in possibilities_generator(prior, min_pos, max_start_pos, contraint, total_filled):
             possible_filled = possible_nums == 1
-            possible_empty = possible_nums != 1
-            possibilities_filled_temp = np.logical_and(
-                possibilities_filled_temp, possible_filled)
-            possibilities_empty_temp = np.logical_and(
-                possibilities_empty_temp, possible_empty)
+            possible_empty = possible_nums == 0
+            possibilities_filled_temp = np.logical_and(possibilities_filled_temp, possible_filled)
+            possibilities_empty_temp = np.logical_and(possibilities_empty_temp, possible_empty)
             i += 1
 
         if i > 0:
-            possibilities_filled[min_pos:max_pos + 1] = \
-                possibilities_filled_temp[min_pos:max_pos + 1]
-            possibilities_empty[min_pos:max_pos + 1] = \
-                possibilities_empty_temp[min_pos:max_pos + 1]
-
+            possibilities_filled = np.logical_or(possibilities_filled, possibilities_filled_temp)
+            possibilities_empty = np.logical_or(possibilities_empty_temp, possibilities_empty)
         # TODO: you can probably end early here. figure out the constraint
         # if np.all(possibilities_filled == False) and \
         #         np.all(possibilities_empty == False):
