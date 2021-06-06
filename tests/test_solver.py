@@ -1,6 +1,7 @@
 import pytest
 from nonogram_solver import solver
 from nonogram_solver.nonogram import Nonogram
+from nonogram_solver.solver import generate_solutions
 import numpy as np
 
 
@@ -73,3 +74,23 @@ def test_nonogram_solver_manual(simple_nonogram_from_string_box):
          [0, 0, 1, 1, 0],
          [-1, -1, -1, 0, 1],
          [-1, -1, 0, 0, 1]]))
+
+
+def test_generate_solutions_ship_example():
+    n_rows = 10
+    n_cols = 10
+    col_clues = [[1], [2, 2], [2, 2, 3], [10], [2, 3], [2, 3], [2, 2, 3], [10], [2, 2, 3], [2]]
+    row_clues = [[1, 1], [3, 3], [3, 3], [1, 1], [3, 4], [3, 4], [1, 1], [10], [9], [7]]
+    puzzle = -1 * np.ones((n_rows, n_cols))
+    generate_solutions(n_rows, n_cols, row_clues, col_clues, puzzle)
+    assert np.all(puzzle == np.array(
+        [[0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+         [0, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+         [0, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+         [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+         [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+         [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+         [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]]))
