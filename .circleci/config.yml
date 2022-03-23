@@ -11,17 +11,16 @@ jobs:
           command: "ls -lah /home/circleci/.pyenv/shims/"
       - restore_cache:
           keys:
-            - cache-1
+            - cache-v1-{{ checksum "requirements.txt" }}
+      - run: pip install -r requirements.txt
       # - run:
       #     name: "which pip is invoked"
       #     command: "which pip"
-      # - run:
-      #     name: "install flake8"
-      #     command: "pip install flake8"
-      # - save_cache:
-      #     key: cache-1
-      #     paths:
-      #       - /home/circleci/.pyenv/shims/
+      - save_cache:
+          key: cache-v1-{{ checksum "requirements.txt" }}
+          paths:
+            - /home/circleci/.pyenv/versions/3.9.6/lib/python3.9/site-packages/
+            - /home/circleci/.pyenv/shims/
       - run:
           name: "Shim directory after install"
           command: "ls -lah /home/circleci/.pyenv/shims/"
