@@ -1,4 +1,4 @@
-version: 2.1
+version: 2.0
 
 jobs:
   main:
@@ -11,21 +11,19 @@ jobs:
           command: "ls -lah /home/circleci/.pyenv/shims/"
       - restore_cache:
           keys:
-            - cache-v1-{{ checksum "requirements.txt" }}
+            - cache-v2-{{ checksum "requirements.txt" }}
       - run: pip install -r requirements.txt
-      # - run:
-      #     name: "which pip is invoked"
-      #     command: "which pip"
       - save_cache:
-          key: cache-v1-{{ checksum "requirements.txt" }}
+          key: cache-v2-{{ checksum "requirements.txt" }}
           paths:
-            - /home/circleci/.pyenv/versions/3.9.6/lib/python3.9/site-packages/
-            - /home/circleci/.pyenv/shims/
+            - /home/circleci/.pyenv/versions/3.9.6/lib/python3.9/site-packages
+            - /home/circleci/.pyenv/shims
       - run:
           name: "Shim directory after install"
           command: "ls -lah /home/circleci/.pyenv/shims/"
 
 workflows:
+  version: 2
   say-hello-workflow:
     jobs:
       - main
