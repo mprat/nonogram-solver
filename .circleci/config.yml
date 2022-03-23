@@ -11,10 +11,10 @@ jobs:
           command: "ls -lah /home/circleci/.pyenv/shims/"
       - restore_cache:
           keys:
-            - cache-v2-{{ checksum "requirements.txt" }}
+            - cache-v3-{{ checksum "requirements.txt" }}
       - run: pip install -r requirements.txt
       - save_cache:
-          key: cache-v2-{{ checksum "requirements.txt" }}
+          key: cache-v3-{{ checksum "requirements.txt" }}
           paths:
             - /home/circleci/.pyenv/versions/3.9.6/lib/python3.9/site-packages
             - /home/circleci/.pyenv/shims
