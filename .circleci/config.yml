@@ -18,6 +18,9 @@ jobs:
           name: "Shim directory before install"
           command: "ls -lah /home/circleci/.pyenv/shims/"
       - run:
+          name: "which pip is invoked"
+          command: "which pip"
+      - run:
           name: "install flake8"
           command: "pip install flake8"
       - run:
