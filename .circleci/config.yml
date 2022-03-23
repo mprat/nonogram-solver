@@ -9,18 +9,26 @@ jobs:
       - run:
           name: "Shim directory before install"
           command: "ls -lah /home/circleci/.pyenv/shims/"
+      - run:
+          name: "versions directory before install"
+          command: "ls -lah /home/circleci/.pyenv/versions/ && ls -lah /home/circleci/.pyenv/versions/3.9.6/bin/"
       - restore_cache:
           keys:
-            - cache-v3-{{ checksum "requirements.txt" }}
+            - cache-v4-{{ checksum "requirements.txt" }}
       - run: pip install -r requirements.txt
       - save_cache:
-          key: cache-v3-{{ checksum "requirements.txt" }}
+          key: cache-v4-{{ checksum "requirements.txt" }}
           paths:
-            - /home/circleci/.pyenv/versions/3.9.6/lib/python3.9/site-packages
-            - /home/circleci/.pyenv/shims
+            - /home/circleci/.pyenv/versions/
       - run:
           name: "Shim directory after install"
           command: "ls -lah /home/circleci/.pyenv/shims/"
+      - run:
+          name: "versions directory after install"
+          command: "ls -lah /home/circleci/.pyenv/versions/ && ls -lah /home/circleci/.pyenv/versions/3.9.6/bin/"
+      - run:
+          name: "attempt to run flake"
+          command: "python -m flake8 nonogram_solver"
 
 workflows:
   version: 2
